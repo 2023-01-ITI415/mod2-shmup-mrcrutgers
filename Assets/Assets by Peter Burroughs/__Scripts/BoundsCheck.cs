@@ -26,7 +26,6 @@ public bool keepOnScreen = true;
 
 [Header("Dynamic")] 
 public eScreenLocs screenLocs = eScreenLocs.onScreen;
-public bool isOnScreen = true;
 public float camWidth; 
 public float camHeight; 
 
@@ -46,14 +45,14 @@ void LateUpdate () {
 
 
     Vector3 pos = transform.position; 
-    isOnScreen = true;
+    screenLocs = eScreenLocs.onScreen;
+    
 
     // Restrict the X position to camWidth 
     if (pos.x > camWidth + checkRadius) {
 
         pos.x = camWidth + checkRadius;
-        
-        isOnScreen = false; 
+        screenLocs |= eScreenLocs.offRight;
         // e 
 
         } 
@@ -61,8 +60,7 @@ void LateUpdate () {
     if (pos.x < -camWidth - checkRadius) { // e 
 
         pos.x = -camWidth - checkRadius;
-        
-        isOnScreen = false; 
+        screenLocs |= eScreenLocs.offLeft;
         // e 
 
         }
@@ -71,30 +69,37 @@ void LateUpdate () {
     if (pos.y > camHeight + checkRadius) { // e 
 
         pos.y = camHeight + checkRadius;
-        
-        isOnScreen = false; // e 
-
+        screenLocs |= eScreenLocs.offUp;        
         } 
 
     if (pos.y < -camHeight -checkRadius) { // e 
 
         pos.y = -camHeight - checkRadius;
-        
-        isOnScreen = false; // e 
+
+        screenLocs |= eScreenLocs.offDown;
+
 
         } 
 
     if ( keepOnScreen && !isOnScreen ) {
             transform.position = pos; 
-            isOnScreen = true;
+            screenLocs = eScreenLocs.onScreen;
             }
 
     }
+
+public bool isOnScreen { // e 
+get { return ( screenLocs == eScreenLocs.onScreen ); } 
+}
 
 
 
     
 
+public bool LocIs( eScreenLocs checkLoc ) { 
+    if ( checkLoc == eScreenLocs.onScreen ) return isOnScreen; // a 
+    return ( (screenLocs & checkLoc) == checkLoc ); // b 
+    }
 
 
 
